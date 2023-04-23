@@ -1,163 +1,304 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="utf-8">
-<title>Create a heatmap layer</title>
-<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
-<style>
-body { margin: 0; padding: 0; }
-#map { position: absolute; top: 0; bottom: 0; width: 100%; }
-</style>
+    <meta charset="utf-8">
+    <title>MapMyMeal</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
 </head>
+
 <body>
-<div id="map"></div>
+    <div id="map"></div>
 
-<script>
-    mapboxgl.accessToken = 'pk.eyJ1IjoiaGl0aGVzaHJhaSIsImEiOiJjbGdzZ3BsMnYxa3lxM2Zqc2lrN2IxZWdhIn0.7r09gFK-pfC-EP-G9mz-ww';
-    const map = new mapboxgl.Map({
-        container: 'map',
-        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-        style: 'mapbox://styles/mapbox/dark-v11',
-        center: [-120, 50],
-        zoom: 2
-    });
-
-    map.on('load', () => {
-        // Add a geojson point source.
-        // Heatmap layers also work with a vector tile source.
-        map.addSource('earthquakes', {
-            'type': 'geojson',
-            'data': 'https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson'
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaGl0aGVzaHJhaSIsImEiOiJjbGdzZ3BsMnYxa3lxM2Zqc2lrN2IxZWdhIn0.7r09gFK-pfC-EP-G9mz-ww';
+        const map = new mapboxgl.Map({
+            container: 'map',
+            // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+            style: 'mapbox://styles/mapbox/dark-v11',
+            center: [-118.4481, 34.0522],
+            zoom: 11
         });
 
-        map.addLayer(
-            {
-                'id': 'earthquakes-heat',
-                'type': 'heatmap',
-                'source': 'earthquakes',
-                'maxzoom': 9,
-                'paint': {
-                    // Increase the heatmap weight based on frequency and property magnitude
-                    'heatmap-weight': [
-                        'interpolate',
-                        ['linear'],
-                        ['get', 'mag'],
-                        0,
-                        0,
-                        6,
-                        1
-                    ],
-                    // Increase the heatmap color weight weight by zoom level
-                    // heatmap-intensity is a multiplier on top of heatmap-weight
-                    'heatmap-intensity': [
-                        'interpolate',
-                        ['linear'],
-                        ['zoom'],
-                        0,
-                        1,
-                        9,
-                        3
-                    ],
-                    // Color ramp for heatmap.  Domain is 0 (low) to 1 (high).
-                    // Begin color ramp at 0-stop with a 0-transparancy color
-                    // to create a blur-like effect.
-                    'heatmap-color': [
-                        'interpolate',
-                        ['linear'],
-                        ['heatmap-density'],
-                        0,
-                        'rgba(33,102,172,0)',
-                        0.2,
-                        'rgb(103,169,207)',
-                        0.4,
-                        'rgb(209,229,240)',
-                        0.6,
-                        'rgb(253,219,199)',
-                        0.8,
-                        'rgb(239,138,98)',
-                        1,
-                        'rgb(178,24,43)'
-                    ],
-                    // Adjust the heatmap radius by zoom level
-                    'heatmap-radius': [
-                        'interpolate',
-                        ['linear'],
-                        ['zoom'],
-                        0,
-                        2,
-                        9,
-                        20
-                    ],
-                    // Transition from heatmap to circle layer by zoom level
-                    'heatmap-opacity': [
-                        'interpolate',
-                        ['linear'],
-                        ['zoom'],
-                        7,
-                        1,
-                        9,
-                        0
+        map.on('load', () => {
+            // Add a geojson point source.
+            // Heatmap layers also work with a vector tile source.
+            map.addSource('prices', {
+                'type': 'geojson',
+                'data': {
+                    "type": "FeatureCollection",
+                    "features": [
+                        {
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
+                                    -118.4463889,
+                                    34.0694444
+                                ]
+                            },
+                            "properties": {
+                                "average_cost": "20",
+                                "area": "Westwood"
+                            }
+                        },
+                        {
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
+                                    -118.4479,
+                                    34.0624
+                                ]
+                            },
+                            "properties": {
+                                "average_cost": "22",
+                                "area": "Century City"
+                            }
+                        },
+                        {
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
+                                    -118.444,
+                                    34.0377
+                                ]
+                            },
+                            "properties": {
+                                "average_cost": "19.6",
+                                "area": "Santa Monica"
+                            }
+                        },
+                        {
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
+                                    -118.4424,
+                                    34.043
+                                ]
+                            },
+                            "properties": {
+                                "average_cost": "19.9",
+                                "area": "West Los Angeles"
+                            }
+                        },
+                        {
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
+                                    -118.4662,
+                                    34.0326
+                                ]
+                            },
+                            "properties": {
+                                "average_cost": "21",
+                                "area": "Venice"
+                            }
+                        },
+                        {
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
+                                    -118.4815,
+                                    34.0116
+                                ]
+                            },
+                            "properties": {
+                                "average_cost": "15.3",
+                                "area": "Mar Vista"
+                            }
+                        },
+                        {
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
+                                    -118.4189,
+                                    34.0631
+                                ]
+                            },
+                            "properties": {
+                                "average_cost": "25",
+                                "area": "Beverly Hills"
+                            }
+                        },
+                        {
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
+                                    -118.4776,
+                                    34.0211
+                                ]
+                            },
+                            "properties": {
+                                "average_cost": "14.8",
+                                "area": "Culver City"
+                            }
+                        },
+                        {
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
+                                    -118.4825,
+                                    34.039
+                                ]
+                            },
+                            "properties": {
+                                "average_cost": "21.3",
+                                "area": "Marina Del Rey"
+                            }
+                        },
+                        {
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
+                                    -118.4593,
+                                    34.0359
+                                ]
+                            },
+                            "properties": {
+                                "average_cost": "16.7",
+                                "area": "Playa Vista"
+                            }
+                        }
                     ]
                 }
-            },
-            'waterway-label'
-        );
+            });
 
-        map.addLayer(
-            {
-                'id': 'earthquakes-point',
-                'type': 'circle',
-                'source': 'earthquakes',
-                'minzoom': 7,
-                'paint': {
-                    // Size circle radius by earthquake magnitude and zoom level
-                    'circle-radius': [
-                        'interpolate',
-                        ['linear'],
-                        ['zoom'],
-                        7,
-                        ['interpolate', ['linear'], ['get', 'mag'], 1, 1, 6, 4],
-                        16,
-                        ['interpolate', ['linear'], ['get', 'mag'], 1, 5, 6, 50]
-                    ],
-                    // Color circle by earthquake magnitude
-                    'circle-color': [
-                        'interpolate',
-                        ['linear'],
-                        ['get', 'mag'],
-                        1,
-                        'rgba(33,102,172,0)',
-                        2,
-                        'rgb(103,169,207)',
-                        3,
-                        'rgb(209,229,240)',
-                        4,
-                        'rgb(253,219,199)',
-                        5,
-                        'rgb(239,138,98)',
-                        6,
-                        'rgb(178,24,43)'
-                    ],
-                    'circle-stroke-color': 'white',
-                    'circle-stroke-width': 1,
-                    // Transition from heatmap to circle layer by zoom level
-                    'circle-opacity': [
-                        'interpolate',
-                        ['linear'],
-                        ['zoom'],
-                        7,
-                        0,
-                        8,
-                        1
-                    ]
-                }
-            },
-            'waterway-label'
-        );
-    });
-</script>
+            map.addLayer(
+                {
+                    'id': 'prices-heat',
+                    'type': 'heatmap',
+                    'source': 'prices',
+                    'maxzoom': 15,
+                    'paint': {
+                        // increase weight as diameter breast height increases
+                        'heatmap-weight': {
+                            'property': 'average_cost',
+                            'type': 'exponential',
+                            'stops': [
+                                [1, 0],
+                                [62, 1]
+                            ]
+                        },
+                        // increase intensity as zoom level increases
+                        'heatmap-intensity': {
+                            'stops': [
+                                [11, 1],
+                                [15, 3]
+                            ]
+                        },
+                        // use sequential color palette to use exponentially as the weight increases
+                        'heatmap-color': [
+                            'interpolate',
+                            ['linear'],
+                            ['heatmap-density'],
+                            0,
+                            'rgba(236,222,239,0)',
+                            0.2,
+                            'rgb(208,209,230)',
+                            0.4,
+                            'rgb(166,189,219)',
+                            0.6,
+                            'rgb(103,169,207)',
+                            0.8,
+                            'rgb(28,144,153)'
+                        ],
+                        // increase radius as zoom increases
+                        'heatmap-radius': {
+                            'stops': [
+                                [5, 50],
+                                [50, 80]
+                            ]
+                        },
+                        // decrease opacity to transition into the circle layer
+                        'heatmap-opacity': {
+                            'default': 1,
+                            'stops': [
+                                [14, 1],
+                                [15, 0]
+                            ]
+                        }
+                    }
+                },
+                'waterway-label'
+            );
 
+            map.addLayer(
+                {
+                    'id': 'prices-point',
+                    'type': 'circle',
+                    'source': 'prices',
+                    'minzoom': 14,
+                    'paint': {
+                        // increase the radius of the circle as the zoom level and dbh value increases
+                        'circle-radius': {
+                            'property': 'average_cost',
+                            'type': 'exponential',
+                            'stops': [
+                                [{ zoom: 15, value: 1 }, 5],
+                                [{ zoom: 15, value: 62 }, 10],
+                                [{ zoom: 22, value: 1 }, 20],
+                                [{ zoom: 22, value: 62 }, 50]
+                            ]
+                        },
+                        'circle-color': {
+                            'property': 'average_cost',
+                            'type': 'exponential',
+                            'stops': [
+                                [0, 'rgba(236,222,239,0)'],
+                                [5, 'rgb(236,222,239)'],
+                                [10, 'rgb(208,209,230)'],
+                                [15, 'rgb(166,189,219)'],
+                                [20, 'rgb(103,169,207)'],
+                                [25, 'rgb(28,144,153)'],
+                                [30, 'rgb(1,108,89)']
+                            ]
+                        },
+                        'circle-stroke-color': 'white',
+                        'circle-stroke-width': 1,
+                        'circle-opacity': {
+                            'stops': [
+                                [14, 0],
+                                [15, 1]
+                            ]
+                        }
+                    }
+                },
+                'waterway-label'
+            );
+        });
+
+        // click on tree to view dbh in a popup
+        map.on('click', 'prices-point', (event) => {
+            new mapboxgl.Popup()
+                .setLngLat(event.features[0].geometry.coordinates)
+                .setHTML(`<strong>DBH:</strong> ${event.features[0].properties.average_cost}`)
+                .addTo(map);
+        });
+    </script>
 </body>
+
 </html>
